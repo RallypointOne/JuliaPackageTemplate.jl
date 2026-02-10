@@ -2,6 +2,8 @@ project:
   type: book
   output-dir: _site
 
+engine: julia
+
 book:
   title: "JuliaPkgTemplate.jl"
   navbar:
@@ -18,5 +20,7 @@ book:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: flatly
+      dark: darkly
     number-sections: false

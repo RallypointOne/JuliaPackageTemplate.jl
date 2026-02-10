@@ -29,8 +29,8 @@ jobs:
 
       - uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install Julia package
-        run: julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+      - name: Install IJulia and package
+        run: julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.add("IJulia"); Pkg.instantiate(); using IJulia; IJulia.installkernel("Julia")'
 
       - name: Render docs
         run: quarto render docs
