@@ -1,0 +1,22 @@
+project:
+  type: book
+  output-dir: _site
+
+book:
+  title: "JuliaPkgTemplate.jl"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+    right:
+      - icon: github
+        href: https://github.com/joshday/JuliaPkgTemplate
+  chapters:
+    - index.qmd
+    - getting-started.qmd
+    - api.qmd
+
+format:
+  html:
+    theme: cosmo
+    number-sections: false

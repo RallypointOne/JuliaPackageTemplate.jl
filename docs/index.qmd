@@ -1,0 +1,20 @@
+# JuliaPkgTemplate.jl {.unnumbered}
+
+Welcome to the documentation for **JuliaPkgTemplate.jl**.
+
+## Installation
+
+```julia
+using Pkg
+Pkg.add("JuliaPkgTemplate")
+```
+
+## Overview
+
+JuliaPkgTemplate.jl is a Julia package that ...
+
+## Hello World
+
+```{julia}
+println("Hello, World!")
+```
