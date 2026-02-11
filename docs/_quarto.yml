@@ -2,9 +2,6 @@ project:
   type: book
   output-dir: _site
 
-search:
-  type: textbox
-
 book:
   title: "JuliaPackageTemplate.jl"
   navbar:
@@ -25,6 +22,8 @@ book:
 
 format:
   html:
+    css: styles.css
+    number-sections: false
     theme:
       light: flatly
       dark: darkly

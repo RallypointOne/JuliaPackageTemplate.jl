@@ -8,3 +8,6 @@ docs/_site
 *.claude
 *.ipynb
 *.quarto
+docs/.quarto/
+docs/*_files/
+**/*.quarto_ipynb

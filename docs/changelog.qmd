@@ -1,6 +1,5 @@
 ---
 title: "Changelog"
-number-sections: false
 ---
 
 {{< include ../CHANGELOG.md >}}
