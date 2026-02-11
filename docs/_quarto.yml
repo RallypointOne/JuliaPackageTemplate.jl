@@ -3,14 +3,14 @@ project:
   output-dir: _site
 
 book:
-  title: "JuliaPkgTemplate.jl"
+  title: "JuliaPackageTemplate.jl"
   navbar:
     left:
       - text: "Home"
         href: index.qmd
     right:
       - icon: github
-        href: https://github.com/joshday/JuliaPkgTemplate
+        href: https://github.com/joshday/JuliaPackageTemplate
   chapters:
     - index.qmd
     - getting-started.qmd
@@ -21,4 +21,3 @@ format:
     theme:
       light: flatly
       dark: darkly
-    number-sections: false

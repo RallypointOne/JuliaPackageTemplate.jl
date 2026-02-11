@@ -2,22 +2,22 @@
 engine: julia
 ---
 
-# JuliaPkgTemplate.jl {.unnumbered}
+# JuliaPackageTemplate.jl {.unnumbered}
 
-Welcome to the documentation for **JuliaPkgTemplate.jl**.
+Welcome to the documentation for **JuliaPackageTemplate.jl**.
 
 ## Installation
 
 ```julia
 using Pkg
-Pkg.add("JuliaPkgTemplate")
+Pkg.add("JuliaPackageTemplate")
 ```
 
 ## Overview
 
-JuliaPkgTemplate.jl is a Julia package that ...
+JuliaPackageTemplate.jl is a Julia package that ...
 
-## Hello World
+## Quickstart
 
 ```{julia}
 println("Hello, World!")
