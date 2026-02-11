@@ -1,3 +1,7 @@
+---
+engine: julia
+---
+
 # JuliaPkgTemplate.jl {.unnumbered}
 
 Welcome to the documentation for **JuliaPkgTemplate.jl**.

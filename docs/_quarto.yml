@@ -2,8 +2,6 @@ project:
   type: book
   output-dir: _site
 
-engine: julia
-
 book:
   title: "JuliaPkgTemplate.jl"
   navbar:
