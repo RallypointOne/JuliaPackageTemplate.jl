@@ -370,8 +370,20 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<iframe src="coverage/index.html" width="100%" height="800px" style="border:none;">
+<iframe id="coverage-iframe" src="coverage/index.html" width="100%" style="border:none; overflow:hidden;" scrolling="no">
 </iframe>
+<script>
+(function() {
+    var iframe = document.getElementById('coverage-iframe');
+    function resize() {
+        try {
+            iframe.style.height = iframe.contentDocument.documentElement.scrollHeight + 'px';
+        } catch(e) {}
+    }
+    iframe.addEventListener('load', resize);
+    window.addEventListener('resize', resize);
+})();
+</script>
 
 
 
