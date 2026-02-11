@@ -20,9 +20,9 @@ book:
       chapters:
         - index.qmd
         - getting-started.qmd
+        - api.qmd
     - part: "Reference"
       chapters:
-        - api.qmd
         - changelog.qmd
         - coverage.qmd
 
