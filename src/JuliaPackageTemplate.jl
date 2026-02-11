@@ -1,5 +1,10 @@
 module JuliaPackageTemplate
 
-# Write your package code here
+"""
+    greet()
+
+Return a greeting string.
+"""
+greet() = "Hello from JuliaPackageTemplate!"
 
 end # module
