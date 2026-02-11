@@ -10,7 +10,7 @@ book:
         href: index.qmd
     right:
       - icon: github
-        href: https://github.com/joshday/JuliaPackageTemplate
+        href: https://github.com/RallypointOne/JuliaPackageTemplate.jl
   chapters:
     - index.qmd
     - getting-started.qmd
