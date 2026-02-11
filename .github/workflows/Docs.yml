@@ -30,7 +30,7 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Install dependencies
-        run: julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.add("QuartoNotebookRunner"); Pkg.instantiate()'
+        run: julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.add(["QuartoNotebookRunner", "IJulia"]); Pkg.instantiate()'
 
       - name: Render docs
         run: quarto render docs
