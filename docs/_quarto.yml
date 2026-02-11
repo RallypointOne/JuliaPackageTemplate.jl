@@ -33,4 +33,5 @@ format:
     theme:
       light: flatly
       dark: darkly
-    include-after-body: _version-selector.html
+    include-after-body:
+      - file: _version-selector.html
