@@ -1,3 +1,6 @@
+---
+engine: julia
+---
 
 # JuliaPkgTemplate.jl {.unnumbered}
 
