@@ -1,5 +1,6 @@
 # Package Setup
 
+- This package was generated from https://github.com/RallypointOne/JuliaPackageTemplate.jl
 - Replace all instances of `JuliaPackageTemplate` to the name set by the user
 - Use Julia to create a new UUID
 
