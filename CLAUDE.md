@@ -28,6 +28,7 @@
 
 # Releases
 
+- First released version should be v0.1.0
 - Preflight: tests must pass and git status must be clean
 - If current version has no git tag, release it as-is (don't bump)
 - If current version is already tagged, bump based on commit log:
