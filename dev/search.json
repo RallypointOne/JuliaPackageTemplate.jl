@@ -110,14 +110,25 @@
     ]
   },
   {
-    "objectID": "changelog.html",
-    "href": "changelog.html",
+    "objectID": "resources/benchmarks.html",
+    "href": "resources/benchmarks.html",
+    "title": "Benchmarks",
+    "section": "",
+    "text": "Precompiling packages...\n   1186.4 ms  ✓ QuartoNotebookWorkerJSON3Ext (serial)\n  1 dependency successfully precompiled in 1 seconds\nfatal: invalid object name 'origin/benchmark-results'.\n*No benchmark results available yet.*\n\nRun benchmarks locally and push results to the `benchmark-results` branch:\n\n```bash\njulia --project=benchmark benchmark/run.jl\nbash benchmark/push_results.sh\n\n```",
+    "crumbs": [
+      "Resources",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Benchmarks</span>"
+    ]
+  },
+  {
+    "objectID": "resources/changelog.html",
+    "href": "resources/changelog.html",
     "title": "Changelog",
     "section": "",
     "text": "Unreleased",
     "crumbs": [
-      "Reference",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Changelog</span>"
+      "Resources",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Changelog</span>"
     ]
   }
 ]
