@@ -27,10 +27,11 @@ book:
     - part: "API"
       chapters:
         - api.qmd
-    - part: "Reference"
+    - part: "Resources"
       chapters:
-        - changelog.qmd
-        - coverage.qmd
+        - resources/benchmarks.qmd
+        - resources/changelog.qmd
+        - resources/coverage.qmd
 
   page-footer:
     center: "Built on __BUILD_DATE__"
