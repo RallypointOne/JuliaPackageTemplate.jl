@@ -67,7 +67,7 @@
   - **Patch**: fixes, docs, refactoring, dependency updates (default)
 - Commit message: `bump version for new release: {x} to {y}`
 - Generate release notes from commits since last tag (group by features, fixes, etc.)
-- For major/minor bumps, release notes must include "breaking changes" section
+- Important: For major or minor version bumps, release notes must include the word "breaking"
 - Update CHANGELOG.md with each release (prepend new entry under `# Unreleased` or version heading)
 - Register via:
   ```
