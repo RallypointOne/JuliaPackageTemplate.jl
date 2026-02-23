@@ -42,6 +42,7 @@
 - Each .qmd file in the docs should have `engine: julia` in the YAML frontmatter
 - Quarto YAML reference: https://quarto.org/docs/reference/
 - Never edit Project.toml or Manifest.toml manually — use Pkg
+- For Claude's plan mode, always write a "plan_$task.md" in .claude
 
 # Docs Sidebar
 
