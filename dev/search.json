@@ -114,7 +114,7 @@
     "href": "resources/benchmarks.html",
     "title": "Benchmarks",
     "section": "",
-    "text": "fatal: invalid object name 'origin/benchmark-results'.\n*No benchmark results available yet.*\n\nRun benchmarks locally and push results to the `benchmark-results` branch:\n\n```bash\njulia --project=benchmark benchmark/run.jl\nbash benchmark/push_results.sh\n```",
+    "text": "NoteNo benchmark results available\n\n\n\nBenchmarks have not been set up for this package yet. See the CLAUDE.md for instructions on how to set up benchmarks.",
     "crumbs": [
       "Resources",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Benchmarks</span>"
