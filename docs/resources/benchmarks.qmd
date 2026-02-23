@@ -5,23 +5,21 @@ engine: julia
 
 ```{julia}
 #| echo: false
+#| output: asis
 import JSON3
 
 json = try
-    read(`git show origin/benchmark-results:results.json`, String)
+    read(pipeline(`git show origin/benchmark-results:results.json`, stderr=devnull), String)
 catch
     nothing
 end
 
 if isnothing(json)
-    println("*No benchmark results available yet.*")
+    println("::: {.callout-note}")
+    println("## No benchmark results available")
     println()
-    println("Run benchmarks locally and push results to the `benchmark-results` branch:")
-    println()
-    println("```bash")
-    println("julia --project=benchmark benchmark/run.jl")
-    println("bash benchmark/push_results.sh")
-    println("```")
+    println("Benchmarks have not been set up for this package yet.  See the CLAUDE.md for instructions on how to set up benchmarks.")
+    println(":::")
 else
     data = JSON3.read(json)
 

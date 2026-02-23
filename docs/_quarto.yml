@@ -13,6 +13,8 @@ book:
     keyboard-shortcut:
       - "/"
   navbar:
+    logo: assets/rallypoint1-logo.jpg
+    logo-href: https://rallypoint1.com
     right:
       - icon: star
         href: https://github.com/RallypointOne/JuliaPackageTemplate.jl/stargazers
@@ -34,7 +36,7 @@ book:
         - resources/coverage.qmd
 
   page-footer:
-    center: "Built on __BUILD_DATE__"
+    center: "Built on 2026-02-23"
 
 language:
   search-text-placeholder: "Search  (/)"
@@ -44,8 +46,7 @@ format:
     css: styles.css
     number-sections: false
     theme:
-      light: flatly
-      dark: darkly
-    respect-user-color-scheme: true
+      - flatly
+      - theme.scss
     include-after-body:
       - file: _version-selector.html

@@ -44,6 +44,26 @@
 - Never edit Project.toml or Manifest.toml manually — use Pkg
 - For Claude's plan mode, always write a "plan_$task.md" in .claude
 
+# Benchmarks (Optional)
+
+Benchmarks are not included by default. To set them up:
+
+1. Create the `benchmark/` directory with a `Project.toml` and `run.jl`:
+   ```
+   julia --project=benchmark -e 'using Pkg; Pkg.add(["BenchmarkTools", "JSON3"]); Pkg.develop(path=".")'
+   ```
+2. Create `benchmark/run.jl` that defines a `BenchmarkGroup` suite, runs it, and writes `benchmark/results.json` (see the template repo for an example)
+3. Copy `benchmark/push_results.sh` from the template repo — it pushes `results.json` to the `benchmark-results` orphan branch via a git worktree
+4. Run benchmarks locally:
+   ```
+   julia --project=benchmark benchmark/run.jl
+   bash benchmark/push_results.sh
+   ```
+5. Add the benchmarks doc page:
+   - Copy `docs/resources/benchmarks.qmd` from the template repo
+   - Add `- resources/benchmarks.qmd` to the Resources part in `docs/_quarto.yml`
+6. The Docs workflow already fetches `benchmark-results` if available (`git fetch origin benchmark-results || true`), so no CI changes are needed
+
 # Docs Sidebar
 
 - `api.qmd` must always be the last item before the "Reference" section in `_quarto.yml`
