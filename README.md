@@ -5,12 +5,13 @@
 
 # JuliaPackageTemplate.jl
 
-A template for generating Julia packages.  Features:
+A template for generating Julia packages developed by Rallypoint One.  Features:
 
 - Docs built via [quarto](https://quarto.org), deployed via GitHub Action
 - Versioned docs
 - Coverage report hosted alongside docs, built with [LocalCoverage](https://github.com/JuliaCI/LocalCoverage.jl)
 - A thoughtful CLAUDE.md for AI-assisted development
+- Rallypoint One branding/styles
 
 ## Docs Structure (gh-pages)
 
