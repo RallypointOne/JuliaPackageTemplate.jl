@@ -75,7 +75,7 @@ Benchmarks are not included by default. To set them up:
 - 4-space indentation
 - Docstrings on all exports
 - Use `### Examples` for inline docs examples
-- Segment code sections with: "#" * repeat('-', 80) * "# " * "$section_title"
+- Segment code sections with: "#" * repeat('-', 80) * "# " * "$section_title" on a single line
 
 # Releases
 
