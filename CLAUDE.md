@@ -1,5 +1,23 @@
 # Package Setup
 
+- Create `.claude/settings.local.json` with the following permissions:
+  ```json
+  {
+    "permissions": {
+      "allow": [
+        "Bash(julia:*)",
+        "Bash(quarto:*)",
+        "Bash(grep:*)",
+        "Bash(gh api:* --method GET:*)",
+        "Bash(gh run view:*)",
+        "Bash(gh pr view:*)",
+        "Bash(gh issue view:*)",
+        "WebSearch"
+      ]
+    }
+  }
+  ```
+
 - This package was generated from https://github.com/RallypointOne/JuliaPackageTemplate.jl
 - Replace all instances of `JuliaPackageTemplate` to the name set by the user
 - Use Julia to create a new UUID
