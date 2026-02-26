@@ -110,17 +110,6 @@
     ]
   },
   {
-    "objectID": "resources/benchmarks.html",
-    "href": "resources/benchmarks.html",
-    "title": "Benchmarks",
-    "section": "",
-    "text": "\u001b[32m\u001b[1mPrecompiling\u001b[22m\u001b[39m packages… 1135.8 ms\u001b[32m ✓ \u001b[39mQuartoNotebookWorkerJSON3Ext\u001b[90m (serial)\u001b[39m 1 dependency successfully precompiled in 1 seconds ::: {.callout-note} ## No benchmark results available\nBenchmarks have not been set up for this package yet. See the CLAUDE.md for instructions on how to set up benchmarks. :::",
-    "crumbs": [
-      "Resources",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Benchmarks</span>"
-    ]
-  },
-  {
     "objectID": "resources/changelog.html",
     "href": "resources/changelog.html",
     "title": "Changelog",
@@ -128,7 +117,7 @@
     "text": "Unreleased",
     "crumbs": [
       "Resources",
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Changelog</span>"
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Changelog</span>"
     ]
   }
 ]
