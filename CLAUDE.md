@@ -33,6 +33,11 @@
   ```
   gh repo edit {owner}/{repo} --homepage https://{owner}.github.io/{repo}/
   ```
+- Remove "Deployments" and "Packages" from the repo homepage sidebar:
+  ```
+  gh api repos/{owner}/{repo}/environments/github-pages -X DELETE
+  gh api repos/{owner}/{repo} -X PATCH -F "has_deployments=false"
+  ```
 
 # Development
 
@@ -44,9 +49,7 @@
 - Never edit Project.toml or Manifest.toml manually — use Pkg
 - For Claude's plan mode, always write a "plan_$task.md" in .claude
 
-# Benchmarks (Optional)
-
-Benchmarks are not included by default. To set them up:
+# Benchmarks
 
 1. Create the `benchmark/` directory with a `Project.toml` and `run.jl`:
    ```
@@ -59,16 +62,13 @@ Benchmarks are not included by default. To set them up:
    julia --project=benchmark benchmark/run.jl
    bash benchmark/push_results.sh
    ```
-5. Add the benchmarks doc page:
-   - Copy `docs/resources/benchmarks.qmd` from the template repo
-   - Add `- resources/benchmarks.qmd` to the Resources part in `docs/_quarto.yml`
-6. The Docs workflow already fetches `benchmark-results` if available (`git fetch origin benchmark-results || true`), so no CI changes are needed
+5. Copy `docs/resources/benchmarks.qmd` from the template repo
+6. The Docs workflow automatically includes the benchmarks page when `benchmark-results` branch exists and `docs/resources/benchmarks.qmd` is present — no `_quarto.yml` changes needed
 
 # Docs Sidebar
 
 - `api.qmd` must always be the last item before the "Reference" section in `_quarto.yml`
 - `api.qmd` lives in its own `part: "API"` to visually separate it from other doc pages
-- The API page uses open cards (not collapsible blocks) to display exports
 
 # Style
 

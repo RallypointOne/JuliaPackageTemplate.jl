@@ -31,7 +31,6 @@ book:
         - api.qmd
     - part: "Resources"
       chapters:
-        - resources/benchmarks.qmd
         - resources/changelog.qmd
         - resources/coverage.qmd
 
