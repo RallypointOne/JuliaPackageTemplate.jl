@@ -1,6 +1,5 @@
 ---
 title: "JuliaPackageTemplate.jl"
-engine: julia
 ---
 
 Welcome to the documentation for **JuliaPackageTemplate.jl**.
