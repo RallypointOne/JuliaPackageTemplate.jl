@@ -8,7 +8,9 @@ title: "Coverage"
 using LocalCoverage
 coverage = generate_coverage("JuliaPackageTemplate"; run_test=true)
 html_coverage(coverage; dir=joinpath(@__DIR__, "_site", "coverage"), open=false)
-rm(joinpath(dirname(@__DIR__), "coverage"); recursive=true, force=true)
+cov_dir = joinpath(dirname(dirname(@__DIR__)), "coverage")
+mv(joinpath(cov_dir, "lcov.info"), joinpath(@__DIR__, "lcov.info"); force=true)
+rm(cov_dir; recursive=true, force=true)
 ```
 
 <iframe id="coverage-iframe" src="coverage/index.html" width="100%" style="border:none; overflow:hidden;" scrolling="no"></iframe>

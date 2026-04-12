@@ -1,23 +1,5 @@
 # Package Setup
 
-- Create `.claude/settings.local.json` with the following permissions:
-  ```json
-  {
-    "permissions": {
-      "allow": [
-        "Bash(julia:*)",
-        "Bash(quarto:*)",
-        "Bash(grep:*)",
-        "Bash(gh api:* --method GET:*)",
-        "Bash(gh run view:*)",
-        "Bash(gh pr view:*)",
-        "Bash(gh issue view:*)",
-        "WebSearch"
-      ]
-    }
-  }
-  ```
-
 - This package was generated from https://github.com/RallypointOne/JuliaPackageTemplate.jl
 - Replace all instances of `JuliaPackageTemplate` to the name set by the user
 - Use Julia to create a new UUID
@@ -43,27 +25,7 @@
 
 - Run tests: `julia --project -e 'using Pkg; Pkg.test()'`
 - Build docs: `quarto render docs`
-- `docs/` has its own Project.toml for doc-specific dependencies.
-- Each .qmd file in the docs should have `engine: julia` in the YAML frontmatter
 - Quarto YAML reference: https://quarto.org/docs/reference/
-- Never edit Project.toml or Manifest.toml manually — use Pkg
-- For Claude's plan mode, always write a "plan_$task.md" in .claude
-
-# Benchmarks
-
-1. Create the `benchmark/` directory with a `Project.toml` and `run.jl`:
-   ```
-   julia --project=benchmark -e 'using Pkg; Pkg.add(["BenchmarkTools", "JSON3"]); Pkg.develop(path=".")'
-   ```
-2. Create `benchmark/run.jl` that defines a `BenchmarkGroup` suite, runs it, and writes `benchmark/results.json` (see the template repo for an example)
-3. Copy `benchmark/push_results.sh` from the template repo — it pushes `results.json` to the `benchmark-results` orphan branch via a git worktree
-4. Run benchmarks locally:
-   ```
-   julia --project=benchmark benchmark/run.jl
-   bash benchmark/push_results.sh
-   ```
-5. Copy `docs/resources/benchmarks.qmd` from the template repo
-6. The Docs workflow automatically includes the benchmarks page when `benchmark-results` branch exists and `docs/resources/benchmarks.qmd` is present — no `_quarto.yml` changes needed
 
 # Docs Sidebar
 

@@ -48,7 +48,7 @@ julia> transform([1, 2, 3]; scale=2.0)
  6.0
 ```
 """
-transform(x::AbstractVector; scale=1.0) = x .* scale
+transform(x::AbstractVector; scale = 1.0) = x .* scale
 
 """
     DEFAULT_GREETING
