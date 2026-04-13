@@ -15,4 +15,5 @@ docs/.quarto/
 docs/*_files/
 **/*.quarto_ipynb
 *.html
+!docs/_version-selector.html
 *.jpg

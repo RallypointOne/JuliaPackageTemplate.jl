@@ -42,10 +42,10 @@ language:
 
 format:
   html:
-    css: styles.css
+    css: assets/styles.css
     number-sections: false
     theme:
       - flatly
-      - theme.scss
+      - assets/theme.scss
     include-after-body:
       - file: _version-selector.html
