@@ -25,7 +25,6 @@ book:
     - part: "Docs"
       chapters:
         - index.qmd
-        - getting-started.qmd
     - part: "API"
       chapters:
         - api.qmd
