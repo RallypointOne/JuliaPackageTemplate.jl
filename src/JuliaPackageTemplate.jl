@@ -49,6 +49,11 @@ Generate a new Julia package from the JuliaPackageTemplate.
 - `logo`: URL for the docs navbar logo (default: Rallypoint One logo for `RallypointOne` repos, `nothing` otherwise).
 - `logo_url`: URL the logo links to (default: `https://rallypoint1.com` for `RallypointOne` repos, `nothing` otherwise).
 
+### Dependencies (when `visibility != "none"`)
+- `git` — repo initialization and push.
+- `gh` — GitHub CLI, authenticated with `repo` scope (create repos, deploy keys, secrets, Pages).
+- `ssh-keygen` — generates the TagBot deploy key.
+
 ### Examples
 ```julia
 generate("myorg/MyPackage.jl")
@@ -230,6 +235,13 @@ SOFTWARE.
         run(`gh repo edit $repo_slug --homepage $homepage`)
         try run(`gh api repos/$repo_slug/environments/github-pages -X DELETE`) catch end
         run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull))
+        # TagBot deploy key
+        mktempdir() do tmpdir
+            keyfile = joinpath(tmpdir, "tagbot_key")
+            run(`ssh-keygen -t ed25519 -f $keyfile -N "" -C tagbot -q`)
+            run(`gh repo deploy-key add $(keyfile * ".pub") --repo $repo_slug --title TagBot --allow-write`)
+            run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))
+        end
     end
 
     @info "Generated $pkg.jl" path owner authors visibility
