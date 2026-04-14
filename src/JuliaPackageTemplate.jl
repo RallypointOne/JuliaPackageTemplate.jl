@@ -212,11 +212,20 @@ SOFTWARE.
         repo_slug = "$owner/$pkg.jl"
         homepage = "https://$owner.github.io/$pkg.jl/"
         run(`gh repo create $repo_slug --$visibility --source $path --push`)
-        try run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/`) catch end
-        try run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/`) catch end
+        # Create empty gh-pages branch so Pages can be enabled
+        empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))
+        sha = strip(String(read(`git -C $path commit-tree $empty_tree -m "Initialize gh-pages"`)))
+        run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)
+        pages_ok = try
+            run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)
+            true
+        catch
+            try run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`); true catch; false end
+        end
+        pages_ok || @warn "Could not enable GitHub Pages — enable manually from repo settings"
         run(`gh repo edit $repo_slug --homepage $homepage`)
         try run(`gh api repos/$repo_slug/environments/github-pages -X DELETE`) catch end
-        run(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`)
+        run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull))
     end
 
     @info "Generated $pkg.jl" path owner authors visibility
