@@ -44,7 +44,7 @@ Generate a new Julia package from the JuliaPackageTemplate.
 
 ### Keyword Arguments
 - `path`: Target directory (default: `~/.julia/dev/PackageName`).
-- `authors`: Package authors (default: `[ENV["USER"]]`).
+- `authors`: Package authors (default: derived from `git config user.name` and `git config user.email`).
 - `visibility`: GitHub repo visibility — `"private"`, `"public"`, or `"none"` to skip repo creation (default: `"private"`).
 - `logo`: URL for the docs navbar logo (default: Rallypoint One logo for `RallypointOne` repos, `nothing` otherwise).
 - `logo_url`: URL the logo links to (default: `https://rallypoint1.com` for `RallypointOne` repos, `nothing` otherwise).
@@ -61,7 +61,11 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     owner, pkg = String(m[1]), String(m[2])
 
     path = isempty(path) ? joinpath(homedir(), ".julia", "dev", pkg) : abspath(expanduser(path))
-    isempty(authors) && (authors = [get(ENV, "USER", get(ENV, "USERNAME", "unknown"))])
+    if isempty(authors)
+        name = strip(readchomp(`git config user.name`))
+        email = strip(readchomp(`git config user.email`))
+        authors = isempty(email) ? [name] : ["$name <$email>"]
+    end
     visibility in ("private", "public", "none") || throw(ArgumentError("visibility must be \"private\", \"public\", or \"none\""))
 
     ispath(path) && error("Path already exists: $path")
