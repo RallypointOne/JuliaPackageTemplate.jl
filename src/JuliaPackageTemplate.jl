@@ -67,9 +67,16 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
 
     path = isempty(path) ? joinpath(homedir(), ".julia", "dev", pkg) : abspath(expanduser(path))
     if isempty(authors)
-        name = strip(readchomp(`git config user.name`))
-        email = strip(readchomp(`git config user.email`))
-        authors = isempty(email) ? [name] : ["$name <$email>"]
+        name = try strip(readchomp(`git config user.name`)) catch; "" end
+        email = try strip(readchomp(`git config user.email`)) catch; "" end
+        author = if !isempty(name) && !isempty(email)
+            "$name <$email>"
+        elseif !isempty(name)
+            name
+        else
+            get(ENV, "USER", get(ENV, "USERNAME", "unknown"))
+        end
+        authors = [author]
     end
     visibility in ("private", "public", "none") || throw(ArgumentError("visibility must be \"private\", \"public\", or \"none\""))
 
