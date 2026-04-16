@@ -66,18 +66,20 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     owner, pkg = String(m[1]), String(m[2])
 
     path = isempty(path) ? joinpath(homedir(), ".julia", "dev", pkg) : abspath(expanduser(path))
+    git_name = try strip(readchomp(`git config user.name`)) catch; "" end
+    git_email = try strip(readchomp(`git config user.email`)) catch; "" end
     if isempty(authors)
-        name = try strip(readchomp(`git config user.name`)) catch; "" end
-        email = try strip(readchomp(`git config user.email`)) catch; "" end
-        author = if !isempty(name) && !isempty(email)
-            "$name <$email>"
-        elseif !isempty(name)
-            name
+        author = if !isempty(git_name) && !isempty(git_email)
+            "$git_name <$git_email>"
+        elseif !isempty(git_name)
+            git_name
         else
             get(ENV, "USER", get(ENV, "USERNAME", "unknown"))
         end
         authors = [author]
     end
+    commit_name = isempty(git_name) ? "JuliaPackageTemplate" : git_name
+    commit_email = isempty(git_email) ? "noreply@example.com" : git_email
     visibility in ("private", "public", "none") || throw(ArgumentError("visibility must be \"private\", \"public\", or \"none\""))
 
     ispath(path) && error("Path already exists: $path")
@@ -221,7 +223,7 @@ SOFTWARE.
     # Initialize git repo
     run(`git -C $path init -q`)
     run(`git -C $path add -A`)
-    run(`git -C $path commit -q -m "Initial commit from JuliaPackageTemplate"`)
+    run(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit -q -m "Initial commit from JuliaPackageTemplate"`)
 
     # Create GitHub repo and configure
     if visibility != "none"
@@ -230,7 +232,7 @@ SOFTWARE.
         run(`gh repo create $repo_slug --$visibility --source $path --push`)
         # Create empty gh-pages branch so Pages can be enabled
         empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))
-        sha = strip(String(read(`git -C $path commit-tree $empty_tree -m "Initialize gh-pages"`)))
+        sha = strip(String(read(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit-tree $empty_tree -m "Initialize gh-pages"`)))
         run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)
         pages_ok = try
             run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)
