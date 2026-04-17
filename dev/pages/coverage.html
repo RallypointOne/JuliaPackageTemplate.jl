@@ -733,14 +733,11 @@ ul.task-list li input[type="checkbox"] {
     if (starLink) {
         var match = starLink.href.match(/github\.com\/([^/]+\/[^/]+)\/stargazers/);
         if (match) {
-            fetch('https://api.github.com/repos/' + match[1])
-                .then(function(res) { return res.ok ? res.json() : null; })
-                .then(function(data) {
-                    if (!data) return;
-                    var text = starLink.querySelector('.menu-text');
-                    if (text) text.textContent = data.stargazers_count;
-                })
-                .catch(function() {});
+            var img = document.createElement('img');
+            img.src = 'https://img.shields.io/github/stars/' + match[1] + '?style=social';
+            img.alt = 'GitHub stars';
+            img.style.verticalAlign = 'middle';
+            starLink.replaceChildren(img);
         }
     }
 })();
