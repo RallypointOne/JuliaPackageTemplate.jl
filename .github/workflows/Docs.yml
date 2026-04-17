@@ -76,6 +76,13 @@ jobs:
           rm -rf "gh-pages-deploy/${VERSION}"
           cp -r docs/_site "gh-pages-deploy/${VERSION}"
 
+          # Inject version + base path into every rendered page so the version
+          # selector doesn't have to guess from the URL.
+          find "gh-pages-deploy/${VERSION}" -name '*.html' -exec sed -i \
+            -e "s|__CURRENT_VERSION__|${VERSION}|g" \
+            -e "s|__BASE_PATH__|/${REPO_NAME}/|g" \
+            {} +
+
           cd gh-pages-deploy
 
           # If release tag: update versions.json and stable redirect
