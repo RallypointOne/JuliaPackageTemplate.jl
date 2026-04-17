@@ -1,0 +1,1 @@
+genhtml -t 'on branch main' -o /home/runner/work/JuliaPackageTemplate.jl/JuliaPackageTemplate.jl/docs/resources/coverage coverage/lcov.info
