@@ -1,5 +1,7 @@
 ---
 title: "Coverage"
+resources:
+  - coverage/
 ---
 
 ```{julia}
@@ -7,7 +9,7 @@ title: "Coverage"
 #| output: false
 using LocalCoverage
 coverage = generate_coverage("JuliaPackageTemplate"; run_test=true)
-html_coverage(coverage; dir=joinpath(@__DIR__, "_site", "coverage"), open=false)
+html_coverage(coverage; dir=joinpath(@__DIR__, "coverage"), open=false)
 cov_dir = joinpath(dirname(dirname(@__DIR__)), "coverage")
 mv(joinpath(cov_dir, "lcov.info"), joinpath(@__DIR__, "lcov.info"); force=true)
 rm(cov_dir; recursive=true, force=true)
