@@ -27,11 +27,10 @@ book:
         - index.qmd
     - part: "API"
       chapters:
-        - api.qmd
+        - pages/api.qmd
     - part: "Resources"
       chapters:
-        - resources/changelog.qmd
-        - resources/coverage.qmd
+        - pages/coverage.qmd
 
   page-footer:
     center: "Built on 2026-02-23"
@@ -47,4 +46,4 @@ format:
       - flatly
       - assets/theme.scss
     include-after-body:
-      - file: _version-selector.html
+      - file: assets/_version-selector.html

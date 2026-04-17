@@ -18,17 +18,16 @@ const VERBATIM_FILES = [
     joinpath(".github", "workflows", "dependabot-automerge.yml"),
     ".gitignore",
     joinpath("docs", ".gitignore"),
-    joinpath("docs", "_version-selector.html"),
+    joinpath("docs", "assets", "_version-selector.html"),
     joinpath("docs", "assets", "styles.css"),
     joinpath("docs", "assets", "theme.scss"),
-    joinpath("docs", "resources", "changelog.qmd"),
 ]
 
 # Files copied with text substitution (JuliaPackageTemplate → pkg, etc.)
 const TEMPLATE_FILES = [
     joinpath("docs", "Project.toml"),
-    joinpath("docs", "api.qmd"),
-    joinpath("docs", "resources", "coverage.qmd"),
+    joinpath("docs", "pages", "api.qmd"),
+    joinpath("docs", "pages", "coverage.qmd"),
 ]
 
 const RP1_LOGO = "https://github.com/user-attachments/assets/f7216152-0d6e-4459-8e65-b9ed59421638"
@@ -187,8 +186,6 @@ $pkg.jl is a Julia package that ...
 println("Hello, World!")
 ```
 """)
-
-    _write("CHANGELOG.md", "## Unreleased\n")
 
     # CLAUDE.md — copy from template, strip Package Setup section (handled by generate)
     claude = read(joinpath(template_dir, "CLAUDE.md"), String)

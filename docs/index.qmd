@@ -2,14 +2,88 @@
 title: "JuliaPackageTemplate.jl"
 ---
 
-Welcome to the documentation for **JuliaPackageTemplate.jl**.
-
 ## Overview
 
-JuliaPackageTemplate.jl is a Julia package that ...
+**JuliaPackageTemplate.jl** scaffolds new Julia packages for Rallypoint One with modern CI, versioned documentation, coverage reporting, and AI-assisted development conventions baked in.
+
+A single call to [`generate`](pages/api.qmd#generate) produces:
+
+- A complete Julia package (`Project.toml`, `src/`, `test/`, `LICENSE`, `README.md`)
+- A [Quarto](https://quarto.org)-based docs site with sidebar navigation, search, and Rallypoint One branding
+- GitHub Actions workflows for CI, docs deployment, doc backfill, TagBot, and Dependabot auto-merge
+- A versioned docs layout on `gh-pages` (stable / dev / per-tag)
+- Coverage reports published alongside docs via [LocalCoverage](https://github.com/JuliaCI/LocalCoverage.jl)
+- A curated `CLAUDE.md` with development, style, and release conventions
+- An initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, and `TAGBOT_SSH` secret pre-configured
 
 ## Quickstart
 
-```{julia}
-println("Hello, World!")
+Install the package into your Julia dev environment:
+
+```julia
+using Pkg
+Pkg.develop(url="https://github.com/RallypointOne/JuliaPackageTemplate.jl")
 ```
+
+Generate a new package:
+
+```julia
+using JuliaPackageTemplate
+
+generate("myorg/MyPackage.jl")
+```
+
+By default this creates `~/.julia/dev/MyPackage`, initializes git, creates a **private** GitHub repo, and wires up Pages + TagBot. See the [API reference](pages/api.qmd#generate) for all keyword arguments.
+
+### Common invocations
+
+```julia
+# Public repo, custom path
+generate("myorg/MyPackage.jl"; visibility="public", path="/tmp/MyPackage")
+
+# Local-only (no GitHub repo created)
+generate("myorg/MyPackage.jl"; visibility="none")
+
+# Custom authors and logo
+generate("myorg/MyPackage.jl";
+    authors=["Alice <alice@example.com>"],
+    logo="https://example.com/logo.png",
+    logo_url="https://example.com",
+)
+```
+
+### Requirements
+
+When `visibility != "none"`, the following tools must be available:
+
+- `git` — repo initialization and push
+- `gh` — authenticated GitHub CLI with `repo` scope
+- `ssh-keygen` — generates the TagBot deploy key
+
+## Docs Structure (`gh-pages`)
+
+Generated packages deploy a versioned docs site with this layout:
+
+```
+gh-pages/
+├── .nojekyll
+├── index.html              # redirect → /RepoName/stable/
+├── versions.json           # ["v1.0.0", "v0.2.0", "v0.1.0"]
+├── stable/
+│   └── index.html          # redirect → /RepoName/<latest tag>/
+├── dev/
+│   └── <full quarto site>  # rebuilt on every push to main
+├── v0.1.0/
+│   └── <full quarto site>  # built on release publish
+├── v0.2.0/
+│   └── <full quarto site>
+└── v1.0.0/
+    └── <full quarto site>
+```
+
+- **`/`** redirects to **`/stable/`**
+- **`/stable/`** redirects to the latest release tag
+- **`/dev/`** is rebuilt on every push to `main`
+- **`/vX.Y.Z/`** directories are created on each release
+- **`versions.json`** tracks all released versions, sorted by semver descending
+- Before any release exists, `/stable/` shows a placeholder page linking to `/dev/`

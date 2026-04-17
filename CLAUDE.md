@@ -33,7 +33,6 @@
 - Commit message: `bump version for new release: {x} to {y}`
 - Generate release notes from commits since last tag (group by features, fixes, etc.)
 - Important: For major or minor version bumps, release notes must include the word "breaking"
-- Update CHANGELOG.md with each release (prepend new entry under `# Unreleased` or version heading)
 - Register via:
   ```
   gh api repos/{owner}/{repo}/commits/{sha}/comments -f body='@JuliaRegistrator register

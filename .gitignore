@@ -2,7 +2,8 @@
 *.jl.*.cov
 *.jl.mem
 coverage/
-docs/resources/lcov.info
+docs/pages/lcov.info
+docs/pages/coverage/
 Manifest.toml
 docs/Manifest.toml
 docs/build/
@@ -15,5 +16,5 @@ docs/.quarto/
 docs/*_files/
 **/*.quarto_ipynb
 *.html
-!docs/_version-selector.html
+!docs/assets/_version-selector.html
 *.jpg
