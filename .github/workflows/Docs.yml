@@ -119,8 +119,9 @@ jobs:
           STABLE_EOF
           fi
 
-          # Create stable placeholder if no releases yet
-          if [ ! -d stable ]; then
+          # (Re)write stable placeholder while no releases exist. Once versions.json
+          # is non-empty, the release branch above owns stable/ so we leave it alone.
+          if [ ! -f versions.json ] || [ "$(tr -d ' \n' < versions.json)" = "[]" ]; then
             mkdir -p stable
             cat > stable/index.html << PLACEHOLDER_EOF
           <!DOCTYPE html>
