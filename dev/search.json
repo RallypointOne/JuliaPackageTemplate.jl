@@ -4,7 +4,18 @@
     "href": "index.html",
     "title": "JuliaPackageTemplate.jl",
     "section": "",
-    "text": "Overview\nWelcome to the documentation for JuliaPackageTemplate.jl.\nJuliaPackageTemplate.jl is a Julia package that …",
+    "text": "Overview\nJuliaPackageTemplate.jl scaffolds new Julia packages for Rallypoint One with modern CI, versioned documentation, coverage reporting, and AI-assisted development conventions baked in.\nA single call to generate produces:",
+    "crumbs": [
+      "Docs",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>JuliaPackageTemplate.jl</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#overview",
+    "href": "index.html#overview",
+    "title": "JuliaPackageTemplate.jl",
+    "section": "",
+    "text": "A complete Julia package (Project.toml, src/, test/, LICENSE, README.md)\nA Quarto-based docs site with sidebar navigation, search, and Rallypoint One branding\nGitHub Actions workflows for CI, docs deployment, doc backfill, TagBot, and Dependabot auto-merge\nA versioned docs layout on gh-pages (stable / dev / per-tag)\nCoverage reports published alongside docs via LocalCoverage\nA curated CLAUDE.md with development, style, and release conventions\nAn initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, and TAGBOT_SSH secret pre-configured",
     "crumbs": [
       "Docs",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>JuliaPackageTemplate.jl</span>"
@@ -15,15 +26,26 @@
     "href": "index.html#quickstart",
     "title": "JuliaPackageTemplate.jl",
     "section": "Quickstart",
-    "text": "Quickstart\n\nprintln(\"Hello, World!\")\n\nHello, World!",
+    "text": "Quickstart\nInstall the package into your Julia dev environment:\nusing Pkg\nPkg.develop(url=\"https://github.com/RallypointOne/JuliaPackageTemplate.jl\")\nGenerate a new package:\nusing JuliaPackageTemplate\n\ngenerate(\"myorg/MyPackage.jl\")\nBy default this creates ~/.julia/dev/MyPackage, initializes git, creates a private GitHub repo, and wires up Pages + TagBot. See the API reference for all keyword arguments.\n\nCommon invocations\n# Public repo, custom path\ngenerate(\"myorg/MyPackage.jl\"; visibility=\"public\", path=\"/tmp/MyPackage\")\n\n# Local-only (no GitHub repo created)\ngenerate(\"myorg/MyPackage.jl\"; visibility=\"none\")\n\n# Custom authors and logo\ngenerate(\"myorg/MyPackage.jl\";\n    authors=[\"Alice &lt;alice@example.com&gt;\"],\n    logo=\"https://example.com/logo.png\",\n    logo_url=\"https://example.com\",\n)\n\n\nRequirements\nWhen visibility != \"none\", the following tools must be available:\n\ngit — repo initialization and push\ngh — authenticated GitHub CLI with repo scope\nssh-keygen — generates the TagBot deploy key",
     "crumbs": [
       "Docs",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>JuliaPackageTemplate.jl</span>"
     ]
   },
   {
-    "objectID": "api.html",
-    "href": "api.html",
+    "objectID": "index.html#docs-structure-gh-pages",
+    "href": "index.html#docs-structure-gh-pages",
+    "title": "JuliaPackageTemplate.jl",
+    "section": "Docs Structure (gh-pages)",
+    "text": "Docs Structure (gh-pages)\nGenerated packages deploy a versioned docs site with this layout:\ngh-pages/\n├── .nojekyll\n├── index.html              # redirect → /RepoName/stable/\n├── versions.json           # [\"v1.0.0\", \"v0.2.0\", \"v0.1.0\"]\n├── stable/\n│   └── index.html          # redirect → /RepoName/&lt;latest tag&gt;/\n├── dev/\n│   └── &lt;full quarto site&gt;  # rebuilt on every push to main\n├── v0.1.0/\n│   └── &lt;full quarto site&gt;  # built on release publish\n├── v0.2.0/\n│   └── &lt;full quarto site&gt;\n└── v1.0.0/\n    └── &lt;full quarto site&gt;\n\n/ redirects to /stable/\n/stable/ redirects to the latest release tag\n/dev/ is rebuilt on every push to main\n/vX.Y.Z/ directories are created on each release\nversions.json tracks all released versions, sorted by semver descending\nBefore any release exists, /stable/ shows a placeholder page linking to /dev/",
+    "crumbs": [
+      "Docs",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>JuliaPackageTemplate.jl</span>"
+    ]
+  },
+  {
+    "objectID": "pages/api.html",
+    "href": "pages/api.html",
     "title": "API",
     "section": "",
     "text": "Functions",
@@ -33,25 +55,14 @@
     ]
   },
   {
-    "objectID": "api.html#functions",
-    "href": "api.html#functions",
+    "objectID": "pages/api.html#functions",
+    "href": "pages/api.html#functions",
     "title": "API",
     "section": "",
     "text": "generate\n\n\ngenerate(\"owner/PackageName.jl\"; path, authors)\nGenerate a new Julia package from the JuliaPackageTemplate.\n\nArguments\n\nrepo: GitHub repository in \"owner/PackageName.jl\" format.\n\n\n\nKeyword Arguments\n\npath: Target directory (default: ~/.julia/dev/PackageName).\nauthors: Package authors (default: derived from git config user.name and git config user.email).\nvisibility: GitHub repo visibility — \"private\", \"public\", or \"none\" to skip repo creation (default: \"private\").\nlogo: URL for the docs navbar logo (default: Rallypoint One logo for RallypointOne repos, nothing otherwise).\nlogo_url: URL the logo links to (default: https://rallypoint1.com for RallypointOne repos, nothing otherwise).\n\n\n\nDependencies (when visibility != \"none\")\n\ngit — repo initialization and push.\ngh — GitHub CLI, authenticated with repo scope (create repos, deploy keys, secrets, Pages).\nssh-keygen — generates the TagBot deploy key.\n\n\n\nExamples\ngenerate(\"myorg/MyPackage.jl\")\ngenerate(\"myorg/MyPackage.jl\"; path=\"/tmp/MyPackage\", authors=[\"Alice\", \"Bob\"])",
     "crumbs": [
       "API",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>API</span>"
-    ]
-  },
-  {
-    "objectID": "resources/changelog.html",
-    "href": "resources/changelog.html",
-    "title": "Changelog",
-    "section": "",
-    "text": "Unreleased",
-    "crumbs": [
-      "Resources",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Changelog</span>"
     ]
   }
 ]

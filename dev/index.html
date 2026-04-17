@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./api.html" rel="next">
+<link href="./pages/api.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -196,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./api.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">API</span></a>
+  <a href="./pages/api.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">API</span></a>
   </div>
 </li>
       </ul>
@@ -212,12 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./resources/changelog.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Changelog</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./resources/coverage.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coverage</span></a>
+  <a href="./pages/coverage.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coverage</span></a>
   </div>
 </li>
       </ul>
@@ -233,7 +228,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#quickstart" id="toc-quickstart" class="nav-link" data-scroll-target="#quickstart">Quickstart</a></li>
+  <li><a href="#quickstart" id="toc-quickstart" class="nav-link" data-scroll-target="#quickstart">Quickstart</a>
+  <ul class="collapse">
+  <li><a href="#common-invocations" id="toc-common-invocations" class="nav-link" data-scroll-target="#common-invocations">Common invocations</a></li>
+  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
+  </ul></li>
+  <li><a href="#docs-structure-gh-pages" id="toc-docs-structure-gh-pages" class="nav-link" data-scroll-target="#docs-structure-gh-pages">Docs Structure (<code>gh-pages</code>)</a></li>
   </ul>
 </nav>
     </div>
@@ -259,19 +259,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Welcome to the documentation for <strong>JuliaPackageTemplate.jl</strong>.</p>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>JuliaPackageTemplate.jl is a Julia package that …</p>
+<p><strong>JuliaPackageTemplate.jl</strong> scaffolds new Julia packages for Rallypoint One with modern CI, versioned documentation, coverage reporting, and AI-assisted development conventions baked in.</p>
+<p>A single call to <a href="./pages/api.html#generate"><code>generate</code></a> produces:</p>
+<ul>
+<li>A complete Julia package (<code>Project.toml</code>, <code>src/</code>, <code>test/</code>, <code>LICENSE</code>, <code>README.md</code>)</li>
+<li>A <a href="https://quarto.org">Quarto</a>-based docs site with sidebar navigation, search, and Rallypoint One branding</li>
+<li>GitHub Actions workflows for CI, docs deployment, doc backfill, TagBot, and Dependabot auto-merge</li>
+<li>A versioned docs layout on <code>gh-pages</code> (stable / dev / per-tag)</li>
+<li>Coverage reports published alongside docs via <a href="https://github.com/JuliaCI/LocalCoverage.jl">LocalCoverage</a></li>
+<li>A curated <code>CLAUDE.md</code> with development, style, and release conventions</li>
+<li>An initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, and <code>TAGBOT_SSH</code> secret pre-configured</li>
+</ul>
 </section>
 <section id="quickstart" class="level2">
 <h2 class="anchored" data-anchor-id="quickstart">Quickstart</h2>
-<div id="2" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Hello, World!"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello, World!</code></pre>
-</div>
-</div>
+<p>Install the package into your Julia dev environment:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">develop</span>(url<span class="op">=</span><span class="st">"https://github.com/RallypointOne/JuliaPackageTemplate.jl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Generate a new package:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">JuliaPackageTemplate</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"myorg/MyPackage.jl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>By default this creates <code>~/.julia/dev/MyPackage</code>, initializes git, creates a <strong>private</strong> GitHub repo, and wires up Pages + TagBot. See the <a href="./pages/api.html#generate">API reference</a> for all keyword arguments.</p>
+<section id="common-invocations" class="level3">
+<h3 class="anchored" data-anchor-id="common-invocations">Common invocations</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Public repo, custom path</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"myorg/MyPackage.jl"</span>; visibility<span class="op">=</span><span class="st">"public"</span>, path<span class="op">=</span><span class="st">"/tmp/MyPackage"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Local-only (no GitHub repo created)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"myorg/MyPackage.jl"</span>; visibility<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom authors and logo</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"myorg/MyPackage.jl"</span>;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    authors<span class="op">=</span>[<span class="st">"Alice &lt;alice@example.com&gt;"</span>],</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    logo<span class="op">=</span><span class="st">"https://example.com/logo.png"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    logo_url<span class="op">=</span><span class="st">"https://example.com"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="requirements" class="level3">
+<h3 class="anchored" data-anchor-id="requirements">Requirements</h3>
+<p>When <code>visibility != "none"</code>, the following tools must be available:</p>
+<ul>
+<li><code>git</code> — repo initialization and push</li>
+<li><code>gh</code> — authenticated GitHub CLI with <code>repo</code> scope</li>
+<li><code>ssh-keygen</code> — generates the TagBot deploy key</li>
+</ul>
+</section>
+</section>
+<section id="docs-structure-gh-pages" class="level2">
+<h2 class="anchored" data-anchor-id="docs-structure-gh-pages">Docs Structure (<code>gh-pages</code>)</h2>
+<p>Generated packages deploy a versioned docs site with this layout:</p>
+<pre><code>gh-pages/
+├── .nojekyll
+├── index.html              # redirect → /RepoName/stable/
+├── versions.json           # ["v1.0.0", "v0.2.0", "v0.1.0"]
+├── stable/
+│   └── index.html          # redirect → /RepoName/&lt;latest tag&gt;/
+├── dev/
+│   └── &lt;full quarto site&gt;  # rebuilt on every push to main
+├── v0.1.0/
+│   └── &lt;full quarto site&gt;  # built on release publish
+├── v0.2.0/
+│   └── &lt;full quarto site&gt;
+└── v1.0.0/
+    └── &lt;full quarto site&gt;</code></pre>
+<ul>
+<li><strong><code>/</code></strong> redirects to <strong><code>/stable/</code></strong></li>
+<li><strong><code>/stable/</code></strong> redirects to the latest release tag</li>
+<li><strong><code>/dev/</code></strong> is rebuilt on every push to <code>main</code></li>
+<li><strong><code>/vX.Y.Z/</code></strong> directories are created on each release</li>
+<li><strong><code>versions.json</code></strong> tracks all released versions, sorted by semver descending</li>
+<li>Before any release exists, <code>/stable/</code> shows a placeholder page linking to <code>/dev/</code></li>
+</ul>
 
 
 </section>
@@ -681,7 +742,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./api.html" class="pagination-link" aria-label="API">
+      <a href="./pages/api.html" class="pagination-link" aria-label="API">
         <span class="nav-page-text"><span class="chapter-title">API</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
