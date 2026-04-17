@@ -1,0 +1,15 @@
+---
+title: "{{PKG}}.jl"
+---
+
+Welcome to the documentation for **{{PKG}}.jl**.
+
+## Overview
+
+{{PKG}}.jl is a Julia package that ...
+
+## Quickstart
+
+```{julia}
+println("Hello, World!")
+```

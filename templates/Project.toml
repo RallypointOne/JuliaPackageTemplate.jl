@@ -1,0 +1,7 @@
+name = "{{PKG}}"
+uuid = "{{UUID}}"
+version = "0.1.0"
+authors = [{{AUTHORS_TOML}}]
+
+[compat]
+julia = "1"

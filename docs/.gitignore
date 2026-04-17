@@ -1,5 +1,5 @@
 /.quarto/
 /_site/
 **/*.quarto_ipynb
-/resources/coverage/
-/resources/lcov.info
+/pages/coverage/
+/pages/lcov.info

@@ -1,5 +1,7 @@
 using JuliaPackageTemplate
 using Test
+using YAML: YAML
+using TOML: TOML
 
 const PKG = "TestPkg"
 const OWNER = "testowner"
@@ -155,6 +157,43 @@ end
             expected = joinpath(dir, PKG)
             p = gen(dir)
             @test p == expected
+        end
+    end
+
+    @testset "generated YAML/TOML parses" begin
+        mktempdir() do dir
+            p = gen(dir)
+
+            # _quarto.yml parses and has expected shape
+            quarto = YAML.load_file(joinpath(p, "docs", "_quarto.yml"))
+            @test quarto["book"]["title"] == "$PKG.jl"
+            @test any(c -> get(c, "part", "") == "API", quarto["book"]["chapters"])
+
+            # Project files parse and carry the new values
+            root_proj = TOML.parsefile(joinpath(p, "Project.toml"))
+            @test root_proj["name"] == PKG
+            @test root_proj["version"] == "0.1.0"
+            @test length(root_proj["authors"]) >= 1
+
+            docs_proj = TOML.parsefile(joinpath(p, "docs", "Project.toml"))
+            @test haskey(docs_proj["deps"], PKG)
+
+            test_proj = TOML.parsefile(joinpath(p, "test", "Project.toml"))
+            @test haskey(test_proj["deps"], "Test")
+        end
+    end
+
+    @testset "no unresolved placeholders" begin
+        mktempdir() do dir
+            p = gen(dir)
+            for (root, _, files) in walkdir(p)
+                occursin(joinpath(p, ".git"), root) && continue
+                for f in files
+                    path = joinpath(root, f)
+                    content = try read(path, String) catch; continue end
+                    @test !occursin("{{", content)
+                end
+            end
         end
     end
 

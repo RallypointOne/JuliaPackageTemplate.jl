@@ -1,0 +1,3 @@
+module {{PKG}}
+
+end # module

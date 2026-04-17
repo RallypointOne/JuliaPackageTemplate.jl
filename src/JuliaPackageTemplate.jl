@@ -128,94 +128,32 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     end
     _write(joinpath("docs", "_quarto.yml"), quarto)
 
-    # --- Generated files ---
+    # --- Render templates/ tree ---
     authors_toml = join(("\"$a\"" for a in authors), ", ")
+    placeholders = [
+        "{{PKG}}"          => pkg,
+        "{{OWNER}}"        => owner,
+        "{{UUID}}"         => new_uuid,
+        "{{AUTHORS_TOML}}" => authors_toml,
+        "{{AUTHORS_TEXT}}" => join(authors, ", "),
+        "{{YEAR}}"         => string(year(today())),
+    ]
+    _apply(s) = reduce((acc, p) -> replace(acc, p), placeholders; init=s)
 
-    _write("Project.toml", """
-name = "$pkg"
-uuid = "$new_uuid"
-version = "0.1.0"
-authors = [$authors_toml]
-
-[compat]
-julia = "1"
-""")
-
-    _write(joinpath("src", "$pkg.jl"), """
-module $pkg
-
-end # module
-""")
-
-    _write(joinpath("test", "Project.toml"), """
-[deps]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-""")
-
-    _write(joinpath("test", "runtests.jl"), """
-using $pkg
-using Test
-
-@testset "$pkg.jl" begin
-end
-""")
-
-    _write("README.md", """
-[![CI](https://github.com/$owner/$pkg.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/$owner/$pkg.jl/actions/workflows/CI.yml)
-[![Docs Build](https://github.com/$owner/$pkg.jl/actions/workflows/Docs.yml/badge.svg)](https://github.com/$owner/$pkg.jl/actions/workflows/Docs.yml)
-[![Stable Docs](https://img.shields.io/badge/docs-stable-blue)](https://$owner.github.io/$pkg.jl/stable/)
-[![Dev Docs](https://img.shields.io/badge/docs-dev-blue)](https://$owner.github.io/$pkg.jl/dev/)
-
-# $pkg.jl
-""")
-
-    _write(joinpath("docs", "index.qmd"), """
----
-title: "$pkg.jl"
----
-
-Welcome to the documentation for **$pkg.jl**.
-
-## Overview
-
-$pkg.jl is a Julia package that ...
-
-## Quickstart
-
-```{julia}
-println("Hello, World!")
-```
-""")
+    templates_dir = joinpath(template_dir, "templates")
+    for (root, _, files) in walkdir(templates_dir)
+        for f in files
+            src = joinpath(root, f)
+            rel = relpath(src, templates_dir)
+            rel = replace(rel, "PKG" => pkg)
+            _write(rel, _apply(read(src, String)))
+        end
+    end
 
     # CLAUDE.md — copy from template, strip Package Setup section (handled by generate)
     claude = read(joinpath(template_dir, "CLAUDE.md"), String)
     claude = replace(claude, r"# Package Setup\n.*?(?=\n# )"s => "")
     _write("CLAUDE.md", claude)
-
-    # LICENSE
-    _write("LICENSE", """
-MIT License
-
-Copyright (c) $(year(today())) $(join(authors, ", "))
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-""")
 
     # Initialize git repo
     run(`git -C $path init -q`)
@@ -223,34 +161,59 @@ SOFTWARE.
     run(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit -q -m "Initial commit from JuliaPackageTemplate"`)
 
     # Create GitHub repo and configure
+    incomplete = String[]
     if visibility != "none"
         repo_slug = "$owner/$pkg.jl"
+        repo_url = "https://github.com/$repo_slug"
         homepage = "https://$owner.github.io/$pkg.jl/"
+
+        # Repo creation is not recoverable — if this fails, abort before remote state diverges.
         run(`gh repo create $repo_slug --$visibility --source $path --push`)
-        # Create empty gh-pages branch so Pages can be enabled
-        empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))
-        sha = strip(String(read(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit-tree $empty_tree -m "Initialize gh-pages"`)))
-        run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)
-        pages_ok = try
-            run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)
-            true
-        catch
-            try run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`); true catch; false end
+
+        _try(desc, f) = try
+            f()
+        catch e
+            @warn "$desc failed — complete manually at $repo_url" exception=(e, catch_backtrace())
+            push!(incomplete, desc)
         end
-        pages_ok || @warn "Could not enable GitHub Pages — enable manually from repo settings"
-        run(`gh repo edit $repo_slug --homepage $homepage`)
+
+        _try("push gh-pages branch") do
+            empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))
+            sha = strip(String(read(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit-tree $empty_tree -m "Initialize gh-pages"`)))
+            run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)
+        end
+
+        _try("enable GitHub Pages") do
+            try
+                run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)
+            catch
+                run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)
+            end
+        end
+
+        _try("set homepage URL") do
+            run(`gh repo edit $repo_slug --homepage $homepage`)
+        end
+
+        # Best-effort only — not critical to package operation.
         try run(`gh api repos/$repo_slug/environments/github-pages -X DELETE`) catch end
-        run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull))
-        # TagBot deploy key
-        mktempdir() do tmpdir
-            keyfile = joinpath(tmpdir, "tagbot_key")
-            run(`ssh-keygen -t ed25519 -f $keyfile -N "" -C tagbot -q`)
-            run(`gh repo deploy-key add $(keyfile * ".pub") --repo $repo_slug --title TagBot --allow-write`)
-            run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))
+        try run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull)) catch end
+
+        _try("install TagBot deploy key + TAGBOT_SSH secret") do
+            mktempdir() do tmpdir
+                keyfile = joinpath(tmpdir, "tagbot_key")
+                run(`ssh-keygen -t ed25519 -f $keyfile -N "" -C tagbot -q`)
+                run(`gh repo deploy-key add $(keyfile * ".pub") --repo $repo_slug --title TagBot --allow-write`)
+                run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))
+            end
         end
     end
 
-    @info "Generated $pkg.jl" path owner authors visibility
+    if !isempty(incomplete)
+        @warn "Package generated but $(length(incomplete)) post-creation step(s) failed" path steps=incomplete
+    else
+        @info "Generated $pkg.jl" path owner authors visibility
+    end
     return path
 end
 
