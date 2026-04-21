@@ -152,7 +152,7 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
 
     # CLAUDE.md — copy from template, strip Package Setup section (handled by generate)
     claude = read(joinpath(template_dir, "CLAUDE.md"), String)
-    claude = replace(claude, r"# Package Setup\n.*?(?=\n# )"s => "")
+    claude = replace(claude, r"# Package Setup\r?\n.*?(?=\r?\n# )"s => "")
     _write("CLAUDE.md", claude)
 
     # Initialize git repo
