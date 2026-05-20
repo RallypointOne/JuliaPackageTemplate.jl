@@ -160,6 +160,17 @@ end
         end
     end
 
+    @testset "default path honors JULIA_PKG_DEVDIR" begin
+        mktempdir() do dir
+            devdir = joinpath(dir, "devdir")
+            p = withenv("JULIA_PKG_DEVDIR" => devdir) do
+                generate("$OWNER/EnvPkg.jl"; visibility="none")
+            end
+            @test p == joinpath(devdir, "EnvPkg")
+            @test isdir(p)
+        end
+    end
+
     @testset "generated YAML/TOML parses" begin
         mktempdir() do dir
             p = gen(dir)

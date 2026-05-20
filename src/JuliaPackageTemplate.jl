@@ -42,7 +42,8 @@ Generate a new Julia package from the JuliaPackageTemplate.
 - `repo`: GitHub repository in `"owner/PackageName.jl"` format.
 
 ### Keyword Arguments
-- `path`: Target directory (default: `~/.julia/dev/PackageName`).
+- `path`: Target directory. Defaults to `PackageName` under `JULIA_PKG_DEVDIR`, or under
+  `~/.julia/dev` when that environment variable is unset.
 - `authors`: Package authors (default: derived from `git config user.name` and `git config user.email`).
 - `visibility`: GitHub repo visibility — `"private"`, `"public"`, or `"none"` to skip repo creation (default: `"private"`).
 - `logo`: URL for the docs navbar logo (default: Rallypoint One logo for `RallypointOne` repos, `nothing` otherwise).
@@ -64,7 +65,12 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     isnothing(m) && throw(ArgumentError("Expected \"owner/PackageName.jl\", got \"$repo\""))
     owner, pkg = String(m[1]), String(m[2])
 
-    path = isempty(path) ? joinpath(homedir(), ".julia", "dev", pkg) : abspath(expanduser(path))
+    if isempty(path)
+        devdir = get(ENV, "JULIA_PKG_DEVDIR", joinpath(homedir(), ".julia", "dev"))
+        path = joinpath(abspath(expanduser(devdir)), pkg)
+    else
+        path = abspath(expanduser(path))
+    end
     git_name = try strip(readchomp(`git config user.name`)) catch; "" end
     git_email = try strip(readchomp(`git config user.email`)) catch; "" end
     if isempty(authors)
