@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-3db6c18bb69885e7f25697a9383847b5.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-426f41d558ea4d560124c4548de7cb69.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-31f147c0cfaf5a92d2eddd42486f9f55.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -272,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="keyword-arguments" class="level3">
 <h3 class="anchored" data-anchor-id="keyword-arguments">Keyword Arguments</h3>
 <ul>
-<li><code>path</code>: Target directory (default: <code>~/.julia/dev/PackageName</code>).</li>
+<li><code>path</code>: Target directory. Defaults to <code>PackageName</code> under <code>JULIA_PKG_DEVDIR</code>, or under <code>~/.julia/dev</code> when that environment variable is unset.</li>
 <li><code>authors</code>: Package authors (default: derived from <code>git config user.name</code> and <code>git config user.email</code>).</li>
 <li><code>visibility</code>: GitHub repo visibility — <code>"private"</code>, <code>"public"</code>, or <code>"none"</code> to skip repo creation (default: <code>"private"</code>).</li>
 <li><code>logo</code>: URL for the docs navbar logo (default: Rallypoint One logo for <code>RallypointOne</code> repos, <code>nothing</code> otherwise).</li>
