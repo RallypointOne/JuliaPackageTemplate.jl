@@ -147,6 +147,7 @@ end
         mktempdir() do dir
             p = gen(dir)
             @test isdir(joinpath(p, ".git"))
+            @test readchomp(`git -C $p rev-parse --abbrev-ref HEAD`) == "main"
             log = readchomp(`git -C $p log --oneline`)
             @test contains(log, "Initial commit from JuliaPackageTemplate")
         end
