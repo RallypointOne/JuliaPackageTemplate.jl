@@ -161,8 +161,8 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     claude = replace(claude, r"# Package Setup\r?\n.*?(?=\r?\n# )"s => "")
     _write("CLAUDE.md", claude)
 
-    # Initialize git repo
-    run(`git -C $path init -q`)
+    # Initialize git repo (force `main`; the Docs workflows only trigger on main)
+    run(`git -C $path init -q -b main`)
     run(`git -C $path add -A`)
     run(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit -q -m "Initial commit from JuliaPackageTemplate"`)
 
@@ -176,7 +176,8 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
         # Repo creation is not recoverable — if this fails, abort before remote state diverges.
         run(`gh repo create $repo_slug --$visibility --source $path --push`)
 
-        _try(desc, f) = try
+        # `do`-block syntax passes the anonymous function as the first argument
+        _try(f, desc) = try
             f()
         catch e
             @warn "$desc failed — complete manually at $repo_url" exception=(e, catch_backtrace())
