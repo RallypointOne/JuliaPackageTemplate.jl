@@ -31,13 +31,13 @@
             <td class="headerValue">on branch main</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">80.9&nbsp;%</td>
-            <td class="headerCovTableEntry">89</td>
+            <td class="headerCovTableEntryLo">71.3&nbsp;%</td>
+            <td class="headerCovTableEntry">101</td>
             <td class="headerCovTableEntry">72</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-05-21 14:57:21</td>
+            <td class="headerValue">2026-06-09 12:52:37</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -223,8 +223,8 @@
 <span id="L161"><span class="lineNum">     161</span> <span class="tlaGNC">          14 :     claude = replace(claude, r&quot;# Package Setup\r?\n.*?(?=\r?\n# )&quot;s =&gt; &quot;&quot;)</span></span>
 <span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">          14 :     _write(&quot;CLAUDE.md&quot;, claude)</span></span>
 <span id="L163"><span class="lineNum">     163</span>              : </span>
-<span id="L164"><span class="lineNum">     164</span>              :     # Initialize git repo</span>
-<span id="L165"><span class="lineNum">     165</span> <span class="tlaGNC">          14 :     run(`git -C $path init -q`)</span></span>
+<span id="L164"><span class="lineNum">     164</span>              :     # Initialize git repo (force `main`; the Docs workflows only trigger on main)</span>
+<span id="L165"><span class="lineNum">     165</span> <span class="tlaGNC">          14 :     run(`git -C $path init -q -b main`)</span></span>
 <span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">          14 :     run(`git -C $path add -A`)</span></span>
 <span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          14 :     run(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit -q -m &quot;Initial commit from JuliaPackageTemplate&quot;`)</span></span>
 <span id="L168"><span class="lineNum">     168</span>              : </span>
@@ -238,54 +238,55 @@
 <span id="L176"><span class="lineNum">     176</span>              :         # Repo creation is not recoverable — if this fails, abort before remote state diverges.</span>
 <span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :         run(`gh repo create $repo_slug --$visibility --source $path --push`)</span></span>
 <span id="L178"><span class="lineNum">     178</span>              : </span>
-<span id="L179"><span class="lineNum">     179</span> <span class="tlaUNC">           0 :         _try(desc, f) = try</span></span>
-<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :             f()</span></span>
-<span id="L181"><span class="lineNum">     181</span>              :         catch e</span>
-<span id="L182"><span class="lineNum">     182</span> <span class="tlaUNC">           0 :             @warn &quot;$desc failed — complete manually at $repo_url&quot; exception=(e, catch_backtrace())</span></span>
-<span id="L183"><span class="lineNum">     183</span> <span class="tlaUNC">           0 :             push!(incomplete, desc)</span></span>
-<span id="L184"><span class="lineNum">     184</span>              :         end</span>
-<span id="L185"><span class="lineNum">     185</span>              : </span>
-<span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC">           0 :         _try(&quot;push gh-pages branch&quot;) do</span></span>
-<span id="L187"><span class="lineNum">     187</span>              :             empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))</span>
-<span id="L188"><span class="lineNum">     188</span>              :             sha = strip(String(read(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit-tree $empty_tree -m &quot;Initialize gh-pages&quot;`)))</span>
-<span id="L189"><span class="lineNum">     189</span>              :             run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)</span>
-<span id="L190"><span class="lineNum">     190</span>              :         end</span>
-<span id="L191"><span class="lineNum">     191</span>              : </span>
-<span id="L192"><span class="lineNum">     192</span> <span class="tlaUNC">           0 :         _try(&quot;enable GitHub Pages&quot;) do</span></span>
-<span id="L193"><span class="lineNum">     193</span>              :             try</span>
-<span id="L194"><span class="lineNum">     194</span>              :                 run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)</span>
-<span id="L195"><span class="lineNum">     195</span>              :             catch</span>
-<span id="L196"><span class="lineNum">     196</span>              :                 run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)</span>
-<span id="L197"><span class="lineNum">     197</span>              :             end</span>
-<span id="L198"><span class="lineNum">     198</span>              :         end</span>
-<span id="L199"><span class="lineNum">     199</span>              : </span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaUNC">           0 :         _try(&quot;set homepage URL&quot;) do</span></span>
-<span id="L201"><span class="lineNum">     201</span>              :             run(`gh repo edit $repo_slug --homepage $homepage`)</span>
-<span id="L202"><span class="lineNum">     202</span>              :         end</span>
-<span id="L203"><span class="lineNum">     203</span>              : </span>
-<span id="L204"><span class="lineNum">     204</span>              :         # Best-effort only — not critical to package operation.</span>
-<span id="L205"><span class="lineNum">     205</span> <span class="tlaUNC">           0 :         try run(`gh api repos/$repo_slug/environments/github-pages -X DELETE`) catch end</span></span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaUNC">           0 :         try run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull)) catch end</span></span>
-<span id="L207"><span class="lineNum">     207</span>              : </span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaUNC">           0 :         _try(&quot;install TagBot deploy key + TAGBOT_SSH secret&quot;) do</span></span>
-<span id="L209"><span class="lineNum">     209</span>              :             mktempdir() do tmpdir</span>
-<span id="L210"><span class="lineNum">     210</span>              :                 keyfile = joinpath(tmpdir, &quot;tagbot_key&quot;)</span>
-<span id="L211"><span class="lineNum">     211</span>              :                 run(`ssh-keygen -t ed25519 -f $keyfile -N &quot;&quot; -C tagbot -q`)</span>
-<span id="L212"><span class="lineNum">     212</span>              :                 run(`gh repo deploy-key add $(keyfile * &quot;.pub&quot;) --repo $repo_slug --title TagBot --allow-write`)</span>
-<span id="L213"><span class="lineNum">     213</span>              :                 run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))</span>
-<span id="L214"><span class="lineNum">     214</span>              :             end</span>
-<span id="L215"><span class="lineNum">     215</span>              :         end</span>
-<span id="L216"><span class="lineNum">     216</span>              :     end</span>
-<span id="L217"><span class="lineNum">     217</span>              : </span>
-<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC tlaBgGNC">          14 :     if !isempty(incomplete)</span></span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaUNC tlaBgUNC">           0 :         @warn &quot;Package generated but $(length(incomplete)) post-creation step(s) failed&quot; path steps=incomplete</span></span>
-<span id="L220"><span class="lineNum">     220</span>              :     else</span>
-<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC tlaBgGNC">          14 :         @info &quot;Generated $pkg.jl&quot; path owner authors visibility</span></span>
-<span id="L222"><span class="lineNum">     222</span>              :     end</span>
-<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">          14 :     return path</span></span>
-<span id="L224"><span class="lineNum">     224</span>              : end</span>
-<span id="L225"><span class="lineNum">     225</span>              : </span>
-<span id="L226"><span class="lineNum">     226</span>              : end # module</span>
+<span id="L179"><span class="lineNum">     179</span>              :         # `do`-block syntax passes the anonymous function as the first argument</span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :         _try(f, desc) = try</span></span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaUNC">           0 :             f()</span></span>
+<span id="L182"><span class="lineNum">     182</span>              :         catch e</span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaUNC">           0 :             @warn &quot;$desc failed — complete manually at $repo_url&quot; exception=(e, catch_backtrace())</span></span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaUNC">           0 :             push!(incomplete, desc)</span></span>
+<span id="L185"><span class="lineNum">     185</span>              :         end</span>
+<span id="L186"><span class="lineNum">     186</span>              : </span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaUNC">           0 :         _try(&quot;push gh-pages branch&quot;) do</span></span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaUNC">           0 :             empty_tree = strip(String(read(pipeline(devnull, `git -C $path mktree`))))</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaUNC">           0 :             sha = strip(String(read(`git -C $path -c user.name=$commit_name -c user.email=$commit_email commit-tree $empty_tree -m &quot;Initialize gh-pages&quot;`)))</span></span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaUNC">           0 :             run(`git -C $path push -q origin $sha:refs/heads/gh-pages`)</span></span>
+<span id="L191"><span class="lineNum">     191</span>              :         end</span>
+<span id="L192"><span class="lineNum">     192</span>              : </span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaUNC">           0 :         _try(&quot;enable GitHub Pages&quot;) do</span></span>
+<span id="L194"><span class="lineNum">     194</span> <span class="tlaUNC">           0 :             try</span></span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaUNC">           0 :                 run(`gh api repos/$repo_slug/pages -X POST -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)</span></span>
+<span id="L196"><span class="lineNum">     196</span>              :             catch</span>
+<span id="L197"><span class="lineNum">     197</span> <span class="tlaUNC">           0 :                 run(`gh api repos/$repo_slug/pages -X PUT -f source.branch=gh-pages -f source.path=/ -f build_type=legacy`)</span></span>
+<span id="L198"><span class="lineNum">     198</span>              :             end</span>
+<span id="L199"><span class="lineNum">     199</span>              :         end</span>
+<span id="L200"><span class="lineNum">     200</span>              : </span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaUNC">           0 :         _try(&quot;set homepage URL&quot;) do</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaUNC">           0 :             run(`gh repo edit $repo_slug --homepage $homepage`)</span></span>
+<span id="L203"><span class="lineNum">     203</span>              :         end</span>
+<span id="L204"><span class="lineNum">     204</span>              : </span>
+<span id="L205"><span class="lineNum">     205</span>              :         # Best-effort only — not critical to package operation.</span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaUNC">           0 :         try run(`gh api repos/$repo_slug/environments/github-pages -X DELETE`) catch end</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaUNC">           0 :         try run(pipeline(`gh api repos/$repo_slug -X PATCH -F has_deployments=false`, devnull)) catch end</span></span>
+<span id="L208"><span class="lineNum">     208</span>              : </span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaUNC">           0 :         _try(&quot;install TagBot deploy key + TAGBOT_SSH secret&quot;) do</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaUNC">           0 :             mktempdir() do tmpdir</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaUNC">           0 :                 keyfile = joinpath(tmpdir, &quot;tagbot_key&quot;)</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaUNC">           0 :                 run(`ssh-keygen -t ed25519 -f $keyfile -N &quot;&quot; -C tagbot -q`)</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaUNC">           0 :                 run(`gh repo deploy-key add $(keyfile * &quot;.pub&quot;) --repo $repo_slug --title TagBot --allow-write`)</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaUNC">           0 :                 run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))</span></span>
+<span id="L215"><span class="lineNum">     215</span>              :             end</span>
+<span id="L216"><span class="lineNum">     216</span>              :         end</span>
+<span id="L217"><span class="lineNum">     217</span>              :     end</span>
+<span id="L218"><span class="lineNum">     218</span>              : </span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC tlaBgGNC">          14 :     if !isempty(incomplete)</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaUNC tlaBgUNC">           0 :         @warn &quot;Package generated but $(length(incomplete)) post-creation step(s) failed&quot; path steps=incomplete</span></span>
+<span id="L221"><span class="lineNum">     221</span>              :     else</span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC tlaBgGNC">          14 :         @info &quot;Generated $pkg.jl&quot; path owner authors visibility</span></span>
+<span id="L223"><span class="lineNum">     223</span>              :     end</span>
+<span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">          14 :     return path</span></span>
+<span id="L225"><span class="lineNum">     225</span>              : end</span>
+<span id="L226"><span class="lineNum">     226</span>              : </span>
+<span id="L227"><span class="lineNum">     227</span>              : end # module</span>
         </pre>
               </td>
             </tr>
