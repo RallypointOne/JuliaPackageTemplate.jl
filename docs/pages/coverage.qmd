@@ -9,7 +9,18 @@ resources:
 #| output: false
 using LocalCoverage
 coverage = generate_coverage("JuliaPackageTemplate"; run_test=true)
-html_coverage(coverage; dir=joinpath(@__DIR__, "coverage"), open=false)
+covdir = joinpath(@__DIR__, "coverage")
+if coverage.lines_tracked == 0
+    # No coverable lines yet (e.g. a freshly generated package). `genhtml` (lcov 2.x)
+    # treats an empty tracefile as a fatal error, so emit a placeholder instead.
+    mkpath(covdir)
+    write(joinpath(covdir, "index.html"),
+        "<!doctype html><html><body style=\"font-family:sans-serif;color:#555\">" *
+        "<p>No coverage data yet &mdash; add code and tests to generate a report.</p>" *
+        "</body></html>")
+else
+    html_coverage(coverage; dir=covdir, open=false)
+end
 cov_dir = joinpath(dirname(dirname(@__DIR__)), "coverage")
 mv(joinpath(cov_dir, "lcov.info"), joinpath(@__DIR__, "lcov.info"); force=true)
 rm(cov_dir; recursive=true, force=true)
