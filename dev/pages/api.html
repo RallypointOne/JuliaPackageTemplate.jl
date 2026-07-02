@@ -283,9 +283,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="dependencies-when-visibility-none">Dependencies (when <code>visibility != "none"</code>)</h3>
 <ul>
 <li><code>git</code> — repo initialization and push.</li>
-<li><code>gh</code> — GitHub CLI, authenticated with <code>repo</code> scope (create repos, deploy keys, secrets, Pages).</li>
+<li><code>gh</code> — GitHub CLI, authenticated with <code>repo</code> scope (create repos, deploy keys, secrets, Pages, branch protection, auto-merge).</li>
 <li><code>ssh-keygen</code> — generates the TagBot deploy key.</li>
 </ul>
+<p><code>main</code> is protected (PRs must pass the <code>CI success</code> check) and repo auto-merge is enabled so dependabot PRs merge automatically once CI passes. Direct pushes by admins remain allowed. Branch protection on private repos requires a paid GitHub plan; on a free plan this step is skipped with a warning and dependabot PRs must be merged manually.</p>
 </section>
 <section id="examples" class="level3">
 <h3 class="anchored" data-anchor-id="examples">Examples</h3>

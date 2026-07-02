@@ -271,6 +271,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Coverage reports published alongside docs via <a href="https://github.com/JuliaCI/LocalCoverage.jl">LocalCoverage</a></li>
 <li>A curated <code>CLAUDE.md</code> with development, style, and release conventions</li>
 <li>An initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, and <code>TAGBOT_SSH</code> secret pre-configured</li>
+<li>A protected <code>main</code> branch (PRs must pass CI) with auto-merge enabled, so Dependabot PRs merge themselves once CI is green (branch protection on private repos requires a paid GitHub plan)</li>
 </ul>
 </section>
 <section id="quickstart" class="level2">
