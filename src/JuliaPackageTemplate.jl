@@ -33,6 +33,9 @@ const TEMPLATE_FILES = [
 const RP1_LOGO = "https://github.com/user-attachments/assets/f7216152-0d6e-4459-8e65-b9ed59421638"
 const RP1_LOGO_URL = "https://rallypoint1.com"
 
+# Must match the `name:` of the aggregate job in .github/workflows/CI.yml
+const REQUIRED_CI_CHECK = "CI success"
+
 """
     generate("owner/PackageName.jl"; path, authors)
 
@@ -51,8 +54,14 @@ Generate a new Julia package from the JuliaPackageTemplate.
 
 ### Dependencies (when `visibility != "none"`)
 - `git` — repo initialization and push.
-- `gh` — GitHub CLI, authenticated with `repo` scope (create repos, deploy keys, secrets, Pages).
+- `gh` — GitHub CLI, authenticated with `repo` scope (create repos, deploy keys, secrets, Pages,
+  branch protection, auto-merge).
 - `ssh-keygen` — generates the TagBot deploy key.
+
+`main` is protected (PRs must pass the `CI success` check) and repo auto-merge is enabled so
+dependabot PRs merge automatically once CI passes. Direct pushes by admins remain allowed.
+Branch protection on private repos requires a paid GitHub plan; on a free plan this step is
+skipped with a warning and dependabot PRs must be merged manually.
 
 ### Examples
 ```julia
@@ -213,6 +222,21 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
                 run(`gh repo deploy-key add $(keyfile * ".pub") --repo $repo_slug --title TagBot --allow-write`)
                 run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))
             end
+        end
+
+        # Protection first: if it fails (e.g. private repo on a free plan), auto-merge
+        # stays disabled so dependabot PRs can't merge without passing CI.
+        _try("protect main branch + enable auto-merge") do
+            protection = """
+            {
+              "required_status_checks": {"strict": false, "checks": [{"context": "$REQUIRED_CI_CHECK"}]},
+              "enforce_admins": false,
+              "required_pull_request_reviews": null,
+              "restrictions": null
+            }
+            """
+            run(pipeline(IOBuffer(protection), `gh api repos/$repo_slug/branches/main/protection -X PUT --input -`))
+            run(`gh repo edit $repo_slug --enable-auto-merge`)
         end
     end
 

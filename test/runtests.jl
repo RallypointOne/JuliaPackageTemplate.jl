@@ -195,6 +195,14 @@ end
         end
     end
 
+    @testset "branch protection check matches CI job name" begin
+        mktempdir() do dir
+            p = gen(dir)
+            ci = YAML.load_file(joinpath(p, ".github", "workflows", "CI.yml"))
+            @test ci["jobs"]["ci-success"]["name"] == JuliaPackageTemplate.REQUIRED_CI_CHECK
+        end
+    end
+
     @testset "no unresolved placeholders" begin
         mktempdir() do dir
             p = gen(dir)
