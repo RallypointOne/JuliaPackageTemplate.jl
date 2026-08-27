@@ -1,7 +1,7 @@
 name = "JuliaPackageTemplate"
 uuid = "7adf5606-a580-4ec5-b7a7-75603f58a1cf"
 version = "0.2.0"
-authors = ["author <author@email.com>"]
+authors = ["Josh Day <emailjoshday@gmail.com>"]
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"

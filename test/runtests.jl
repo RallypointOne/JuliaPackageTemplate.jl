@@ -108,18 +108,21 @@ end
             q = read(joinpath(p, "docs", "_quarto.yml"), String)
             @test contains(q, "logo: $(JuliaPackageTemplate.RP1_LOGO)")
             @test contains(q, "logo-href: $(JuliaPackageTemplate.RP1_LOGO_URL)")
+            @test isfile(joinpath(p, "docs", "assets", "logo.svg"))
 
             # Non-RP1 owner → no logo lines
             p2 = gen(dir; pkg="NoLogo")
             q2 = read(joinpath(p2, "docs", "_quarto.yml"), String)
             @test !contains(q2, "logo:")
             @test !contains(q2, "logo-href:")
+            @test !isfile(joinpath(p2, "docs", "assets", "logo.svg"))
 
             # Explicit logo override
             p3 = gen(dir; pkg="CustomLogo", logo="https://example.com/l.png", logo_url="https://example.com")
             q3 = read(joinpath(p3, "docs", "_quarto.yml"), String)
             @test contains(q3, "logo: https://example.com/l.png")
             @test contains(q3, "logo-href: https://example.com")
+            @test !isfile(joinpath(p3, "docs", "assets", "logo.svg"))
         end
     end
 

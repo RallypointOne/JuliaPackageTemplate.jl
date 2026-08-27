@@ -32,11 +32,11 @@ h1 code, h2 code, h3 code, h4 code {
 
 /* Navbar bottom line and logo */
 .navbar {
-    border-bottom: 1px solid #EFF0F6;
+    border-bottom: 1px solid #D9DADC;
 }
 
 .navbar .nav-link:hover {
-    color: #B02102 !important;
+    color: #C8202C !important;
 }
 
 .navbar .navbar-logo {

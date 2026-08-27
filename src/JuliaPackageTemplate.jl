@@ -30,7 +30,8 @@ const TEMPLATE_FILES = [
     joinpath("docs", "pages", "coverage.qmd"),
 ]
 
-const RP1_LOGO = "https://github.com/user-attachments/assets/f7216152-0d6e-4459-8e65-b9ed59421638"
+# Docs-relative path; the SVG is written into the generated package when this default is used.
+const RP1_LOGO = "assets/logo.svg"
 const RP1_LOGO_URL = "https://rallypoint1.com"
 
 # Must match the `name:` of the aggregate job in .github/workflows/CI.yml
@@ -49,7 +50,8 @@ Generate a new Julia package from the JuliaPackageTemplate.
   `~/.julia/dev` when that environment variable is unset.
 - `authors`: Package authors (default: derived from `git config user.name` and `git config user.email`).
 - `visibility`: GitHub repo visibility — `"private"`, `"public"`, or `"none"` to skip repo creation (default: `"private"`).
-- `logo`: URL for the docs navbar logo (default: Rallypoint One logo for `RallypointOne` repos, `nothing` otherwise).
+- `logo`: URL or docs-relative path for the docs navbar logo (default: the bundled Rallypoint One
+  mark for `RallypointOne` repos, `nothing` otherwise).
 - `logo_url`: URL the logo links to (default: `https://rallypoint1.com` for `RallypointOne` repos, `nothing` otherwise).
 
 ### Dependencies (when `visibility != "none"`)
@@ -134,6 +136,8 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
     if isnothing(_logo)
         quarto = replace(quarto, r"\n    logo: [^\n]+" => "")
     else
+        _logo == RP1_LOGO && _write(joinpath("docs", "assets", "logo.svg"),
+            read(joinpath(template_dir, "docs", "assets", "logo.svg"), String))
         quarto = replace(quarto, r"(logo: )[^\n]+" => SubstitutionString("\\1$_logo"))
     end
     if isnothing(_logo_url)
