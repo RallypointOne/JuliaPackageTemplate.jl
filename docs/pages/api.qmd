@@ -31,7 +31,7 @@ for (kind, label) in [(:type, "Types"), (:function, "Functions"), (:macro, "Macr
         binding = getfield(JuliaPackageTemplate, name)
         doc = string(Docs.doc(binding))
         println("""
-        ::: {.card .mb-3}
+        ::: {.card .mb-3 .api-card}
         ::: {.card-header .api-item-header}
         #### `$name` {#$(anchor(name))}
         :::
