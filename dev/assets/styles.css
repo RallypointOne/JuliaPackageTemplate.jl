@@ -46,6 +46,12 @@ h1 code, h2 code, h3 code, h4 code {
 }
 
 /* API item cards */
+.api-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
 .api-card {
     border-left: 3px solid var(--bs-primary);
 }
@@ -53,9 +59,16 @@ h1 code, h2 code, h3 code, h4 code {
 .api-item-header {
     background-color: #F7F7F8 !important;
     border-bottom: 1px solid #D9DADC !important;
+    cursor: pointer;
+}
+
+/* Nothing below the header to divide from while the card is closed. */
+.api-card:not([open]) > .api-item-header {
+    border-bottom: none !important;
 }
 
 .api-item-header h4 {
+    display: inline;
     margin: 0 !important;
     color: #1A1A1B !important;
     font-size: 1rem;

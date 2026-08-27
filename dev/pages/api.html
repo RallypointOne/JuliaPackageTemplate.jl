@@ -257,12 +257,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="api-controls">
+<button type="button" class="btn btn-sm btn-outline-secondary" data-api-toggle="open">
+Open all
+</button>
+<button type="button" class="btn btn-sm btn-outline-secondary" data-api-toggle="close">
+Close all
+</button>
+</div>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
-<div class="card mb-3 api-card">
-<section id="generate" class="level4 card-header api-item-header">
-<h4 class="anchored" data-anchor-id="generate"><code>generate</code></h4>
-</section>
+<details class="card mb-3 api-card">
+<summary class="card-header api-item-header">
+<h4 id="generate" class="anchored">
+<code>generate</code>
+</h4>
+</summary>
 <div class="card-body">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"owner/PackageName.jl"</span>; path, authors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Generate a new Julia package from the JuliaPackageTemplate.</p>
@@ -297,7 +307,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">generate</span>(<span class="st">"myorg/MyPackage.jl"</span>; path<span class="op">=</span><span class="st">"/tmp/MyPackage"</span>, authors<span class="op">=</span>[<span class="st">"Alice"</span>, <span class="st">"Bob"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </div>
-</div>
+</details>
+<script>
+(function() {
+    document.querySelectorAll("[data-api-toggle]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var open = btn.dataset.apiToggle === "open";
+            document.querySelectorAll("details.api-card").forEach(function(d) { d.open = open; });
+        });
+    });
+
+    // Browsers do not expand a closed <details> when navigating to an id inside it,
+    // so a deep link or search hit would otherwise land on a collapsed card.
+    function revealTarget() {
+        var id = decodeURIComponent(location.hash.slice(1));
+        var el = id && document.getElementById(id);
+        var card = el && el.closest("details.api-card");
+        // Expanding only adds content below the summary, so the browser's own
+        // scroll to the anchor stays correct.
+        if (card) card.open = true;
+    }
+    revealTarget();
+    window.addEventListener("hashchange", revealTarget);
+})();
+</script>
 
 
 </section>
