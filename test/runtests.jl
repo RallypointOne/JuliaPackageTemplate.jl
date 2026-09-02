@@ -206,6 +206,48 @@ end
         end
     end
 
+    @testset "ci_app_key" begin
+        @test isnothing(JuliaPackageTemplate.ci_app_key(OWNER))
+        @test isnothing(JuliaPackageTemplate.ci_app_key(RP1_OWNER))
+        withenv("DERANGEDIONS_CI_APP_KEY_FILE" => nothing) do
+            k = JuliaPackageTemplate.ci_app_key("DerangedIons")
+            @test k.secret == "DERANGEDIONS_CI_APP_KEY"
+            @test k.file == joinpath(homedir(), ".config", "derangedions", "ci-reader.pem")
+        end
+        mktempdir() do dir
+            withenv("DERANGEDIONS_CI_APP_KEY_FILE" => joinpath(dir, "k.pem")) do
+                @test JuliaPackageTemplate.ci_app_key("DerangedIons").file == joinpath(dir, "k.pem")
+            end
+        end
+    end
+
+    @testset "private-deps step in generated workflows" begin
+        mktempdir() do dir
+            p = gen(dir)
+            uses(s, prefix) = haskey(s, "uses") && startswith(s["uses"], prefix)
+            touches_pkg(s) = uses(s, "julia-actions/julia-buildpkg") ||
+                (haskey(s, "run") && occursin("Pkg.", s["run"]))
+            checked = 0
+            for wf in ("CI.yml", "Docs.yml", "DocsBackfill.yml")
+                y = YAML.load_file(joinpath(p, ".github", "workflows", wf))
+                for (jobname, job) in y["jobs"]
+                    steps = get(job, "steps", Any[])
+                    any(s -> uses(s, "julia-actions/cache"), steps) || continue
+                    checked += 1
+                    idx = findfirst(s -> uses(s, "DerangedIons/.github/actions/julia-private-deps"), steps)
+                    @test !isnothing(idx)
+                    isnothing(idx) && continue
+                    @test steps[idx]["if"] == "env.HAS_APP_KEY == 'true'"
+                    @test haskey(job["env"], "HAS_APP_KEY")
+                    # Must run before Pkg first resolves dependencies in that job.
+                    first_pkg = findfirst(touches_pkg, steps)
+                    @test isnothing(first_pkg) || idx < first_pkg
+                end
+            end
+            @test checked == 4   # CI test + docs-render, Docs, DocsBackfill
+        end
+    end
+
     @testset "no unresolved placeholders" begin
         mktempdir() do dir
             p = gen(dir)

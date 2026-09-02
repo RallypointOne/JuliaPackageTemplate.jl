@@ -20,6 +20,9 @@ jobs:
     permissions:
       actions: write
       contents: read
+    env:
+      # Secrets aren't readable in a step-level `if`, so surface presence here.
+      HAS_APP_KEY: ${{ secrets.DERANGEDIONS_CI_APP_KEY != '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -36,6 +39,11 @@ jobs:
         with:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v3
+      - name: Authenticate to private DerangedIons deps
+        if: env.HAS_APP_KEY == 'true'
+        uses: DerangedIons/.github/actions/julia-private-deps@main
+        with:
+          app-private-key: ${{ secrets.DERANGEDIONS_CI_APP_KEY }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
 
@@ -43,12 +51,20 @@ jobs:
     name: Docs render smoke test
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Secrets aren't readable in a step-level `if`, so surface presence here.
+      HAS_APP_KEY: ${{ secrets.DERANGEDIONS_CI_APP_KEY != '' }}
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1'
       - uses: julia-actions/cache@v3
+      - name: Authenticate to private DerangedIons deps
+        if: env.HAS_APP_KEY == 'true'
+        uses: DerangedIons/.github/actions/julia-private-deps@main
+        with:
+          app-private-key: ${{ secrets.DERANGEDIONS_CI_APP_KEY }}
       - uses: quarto-dev/quarto-actions/setup@v2
       - name: Install lcov
         run: sudo apt-get install -y lcov

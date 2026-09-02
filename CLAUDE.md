@@ -1,6 +1,7 @@
 # Package Setup
 
 - Generate a new package: `generate("owner/PackageName.jl")`
+- DerangedIons packages: `generate` installs the CI app key secret from `$DERANGEDIONS_CI_APP_KEY_FILE` (default `~/.config/derangedions/ci-reader.pem`); the workflows' `julia-private-deps` step skips itself when the secret is absent
 
 # Development
 

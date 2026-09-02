@@ -20,6 +20,9 @@ concurrency:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    env:
+      # Secrets aren't readable in a step-level `if`, so surface presence here.
+      HAS_APP_KEY: ${{ secrets.DERANGEDIONS_CI_APP_KEY != '' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -48,6 +51,11 @@ jobs:
         with:
           version: '1'
       - uses: julia-actions/cache@v3
+      - name: Authenticate to private DerangedIons deps
+        if: env.HAS_APP_KEY == 'true'
+        uses: DerangedIons/.github/actions/julia-private-deps@main
+        with:
+          app-private-key: ${{ secrets.DERANGEDIONS_CI_APP_KEY }}
       - name: Install docs dependencies
         run: julia --project=docs -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
       - name: Install lcov

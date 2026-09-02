@@ -14,7 +14,7 @@ A single call to [`generate`](pages/api.qmd#generate) produces:
 - A versioned docs layout on `gh-pages` (stable / dev / per-tag)
 - Coverage reports published alongside docs via [LocalCoverage](https://github.com/JuliaCI/LocalCoverage.jl)
 - A curated `CLAUDE.md` with development, style, and release conventions
-- An initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, and `TAGBOT_SSH` secret pre-configured
+- An initialized git repository and (optionally) a GitHub repo with Pages, TagBot deploy key, `TAGBOT_SSH` secret, and (for `DerangedIons` repos) the `DERANGEDIONS_CI_APP_KEY` secret pre-configured so CI can clone private sibling repos
 - A protected `main` branch (PRs must pass CI) with auto-merge enabled, so Dependabot PRs merge themselves once CI is green (branch protection on private repos requires a paid GitHub plan)
 
 ## Quickstart

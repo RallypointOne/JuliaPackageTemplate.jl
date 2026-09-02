@@ -13,6 +13,9 @@ concurrency:
 jobs:
   backfill:
     runs-on: ubuntu-latest
+    env:
+      # Secrets aren't readable in a step-level `if`, so surface presence here.
+      HAS_APP_KEY: ${{ secrets.DERANGEDIONS_CI_APP_KEY != '' }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v7
@@ -38,6 +41,11 @@ jobs:
         with:
           version: '1'
       - uses: julia-actions/cache@v3
+      - name: Authenticate to private DerangedIons deps
+        if: env.HAS_APP_KEY == 'true'
+        uses: DerangedIons/.github/actions/julia-private-deps@main
+        with:
+          app-private-key: ${{ secrets.DERANGEDIONS_CI_APP_KEY }}
       - uses: quarto-dev/quarto-actions/setup@v2
 
       # Prepare gh-pages

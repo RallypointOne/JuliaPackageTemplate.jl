@@ -34,6 +34,40 @@ const TEMPLATE_FILES = [
 const RP1_LOGO = "assets/logo.svg"
 const RP1_LOGO_URL = "https://rallypoint1.com"
 
+# Per-owner GitHub App private key that `generate` installs as a repo secret so CI can clone
+# private sibling repos (consumed by the `julia-private-deps` step in .github/workflows/*.yml).
+const CI_APP_KEY_SECRETS = Dict(
+    "DerangedIons" => (
+        secret  = "DERANGEDIONS_CI_APP_KEY",
+        env     = "DERANGEDIONS_CI_APP_KEY_FILE",
+        default = joinpath("~", ".config", "derangedions", "ci-reader.pem"),
+    ),
+)
+
+"""
+    ci_app_key(owner) -> Union{Nothing, NamedTuple}
+
+Return `(secret, file)` for the GitHub App private key that CI in `owner`'s repos needs in
+order to clone private sibling repos, or `nothing` when `owner` has no such app configured
+in `CI_APP_KEY_SECRETS`. The key file path is read from the owner's `*_FILE` environment
+variable, falling back to a default under `~/.config`. The file itself is never read here.
+
+### Examples
+```julia
+julia> ci_app_key("DerangedIons").secret
+"DERANGEDIONS_CI_APP_KEY"
+
+julia> ci_app_key("someone-else") === nothing
+true
+```
+"""
+function ci_app_key(owner::AbstractString)
+    haskey(CI_APP_KEY_SECRETS, owner) || return nothing
+    spec = CI_APP_KEY_SECRETS[owner]
+    file = abspath(expanduser(get(ENV, spec.env, spec.default)))
+    return (secret = spec.secret, file = file)
+end
+
 # Must match the `name:` of the aggregate job in .github/workflows/CI.yml
 const REQUIRED_CI_CHECK = "CI success"
 
@@ -59,6 +93,9 @@ Generate a new Julia package from the JuliaPackageTemplate.
 - `gh` — GitHub CLI, authenticated with `repo` scope (create repos, deploy keys, secrets, Pages,
   branch protection, auto-merge).
 - `ssh-keygen` — generates the TagBot deploy key.
+- For owners listed in `CI_APP_KEY_SECRETS` (currently `DerangedIons`): the GitHub App private
+  key file named by `DERANGEDIONS_CI_APP_KEY_FILE` (default `~/.config/derangedions/ci-reader.pem`),
+  installed as the `DERANGEDIONS_CI_APP_KEY` repo secret so CI can clone private sibling repos.
 
 `main` is protected (PRs must pass the `CI success` check) and repo auto-merge is enabled so
 dependabot PRs merge automatically once CI passes. Direct pushes by admins remain allowed.
@@ -225,6 +262,17 @@ function generate(repo::AbstractString; path::AbstractString="", authors::Vector
                 run(`ssh-keygen -t ed25519 -f $keyfile -N "" -C tagbot -q`)
                 run(`gh repo deploy-key add $(keyfile * ".pub") --repo $repo_slug --title TagBot --allow-write`)
                 run(pipeline(keyfile, `gh secret set TAGBOT_SSH --repo $repo_slug`))
+            end
+        end
+
+        # Org-level secrets don't reach private repos on a free GitHub plan, so the CI app
+        # key is installed per repo here. The workflows skip the step when it is absent.
+        key = ci_app_key(owner)
+        if !isnothing(key)
+            _try("install $(key.secret) secret (CI access to private $owner repos)") do
+                isfile(key.file) || error("GitHub App key file not found: $(key.file). " *
+                    "Set $(CI_APP_KEY_SECRETS[owner].env) or run `gh secret set $(key.secret) --repo $repo_slug < key.pem` manually.")
+                run(pipeline(key.file, `gh secret set $(key.secret) --repo $repo_slug`))
             end
         end
 
